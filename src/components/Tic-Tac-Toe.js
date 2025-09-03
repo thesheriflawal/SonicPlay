@@ -1377,7 +1377,7 @@ const TicTacToe = ({
                     </div>
                   ) : (
                     <div className="text-2xl font-bold text-gray-400">
-                      It's a Draw!
+                      It&apos;s a Draw!
                     </div>
                   )}
                   <button
@@ -1413,7 +1413,7 @@ const TicTacToe = ({
                     ) : (
                       <>
                         <Crown className="w-6 h-6 text-purple-400" />
-                        {getPlayerName(currentPlayer)}'s Turn (
+                        {getPlayerName(currentPlayer)}&apos;s Turn (
                         {getPlayerSymbol(currentPlayer)})
                         <span
                           className={`ml-2 ${

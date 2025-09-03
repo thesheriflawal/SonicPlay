@@ -1476,7 +1476,7 @@ const ConnectFour = ({
                     </div>
                   ) : (
                     <div className="text-2xl font-bold text-gray-400">
-                      It's a Draw!
+                      It&apos;s a Draw!
                     </div>
                   )}
                   <button
@@ -1512,7 +1512,7 @@ const ConnectFour = ({
                     ) : (
                       <>
                         <Crown className="w-6 h-6 text-purple-400" />
-                        {getPlayerName(currentPlayer)}'s Turn
+                        {getPlayerName(currentPlayer)}&apos;s Turn
                         <span
                           className={`ml-2 ${
                             timer <= 10

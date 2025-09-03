@@ -325,9 +325,9 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
                   🚀 Deployed on Lisk Sepolia Testnet
                 </h3>
                 <p className="text-gray-300 mb-4">
-                  All games are deployed on the Lisk Sepolia testnet. You'll
-                  need Lisk Sepolia ETH to play and interact with the smart
-                  contracts.
+                  All games are deployed on the Lisk Sepolia testnet.
+                  You&apos;ll need Lisk Sepolia ETH to play and interact with
+                  the smart contracts.
                 </p>
                 <div className="space-y-2">
                   <p className="text-sm text-gray-400 font-medium">

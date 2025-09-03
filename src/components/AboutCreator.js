@@ -155,7 +155,7 @@ const AboutCreator = ({ onBack }) => {
               </div>
 
               <p className="text-gray-300 leading-relaxed mb-6">
-                Hi, I'm Sherif Lawal, a passionate blockchain and frontend
+                Hi, I&apos;m Sherif Lawal, a passionate blockchain and frontend
                 developer who loves building interactive, on-chain games. My
                 projects bring classic paper games like Tic Tac Toe, Connect
                 Four, Dots and Boxes, and more into the blockchain space.
@@ -194,7 +194,8 @@ const AboutCreator = ({ onBack }) => {
 
                 <p className="text-gray-300 leading-relaxed">
                   This is part of my ongoing journey to push the boundaries of
-                  what's possible in decentralized gaming and Web3 development.
+                  what&apos;s possible in decentralized gaming and Web3
+                  development.
                 </p>
               </div>
             </div>

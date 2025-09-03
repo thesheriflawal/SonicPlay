@@ -1622,7 +1622,7 @@ const DotsAndBoxes = ({
                     </div>
                   ) : (
                     <div className="text-2xl font-bold text-gray-400">
-                      It's a Draw!
+                      It&apos;s a Draw!
                     </div>
                   )}
                   <div className="text-lg text-white mt-2">
@@ -1661,7 +1661,7 @@ const DotsAndBoxes = ({
                     ) : (
                       <>
                         <Crown className="w-6 h-6 text-purple-400" />
-                        {getPlayerName(currentPlayer)}'s Turn
+                        {getPlayerName(currentPlayer)}&apos;s Turn
                         <span
                           className={`ml-2 ${
                             timer <= 10

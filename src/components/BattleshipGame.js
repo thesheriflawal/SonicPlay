@@ -1426,7 +1426,7 @@ const BattleshipGame = ({
                 </div>
               ) : (
                 <div className="text-gray-400">
-                  {opponent?.name || "Opponent"}'s Turn
+                  {opponent?.name || "Opponent"}&apos;s Turn
                 </div>
               )}
             </div>

@@ -1189,7 +1189,7 @@ const SOSGame = ({
                 <div className="text-green-400 font-semibold">Your Turn</div>
               ) : (
                 <div className="text-gray-400">
-                  {opponent?.name || "Opponent"}'s Turn
+                  {opponent?.name || "Opponent"}&apos;s Turn
                 </div>
               )}
             </div>
@@ -1205,7 +1205,7 @@ const SOSGame = ({
                 </div>
               ) : winner === "0x0000000000000000000000000000000000000000" ? (
                 <div className="text-yellow-400 font-bold text-xl">
-                  It's a Tie!
+                  It&apos;s a Tie!
                 </div>
               ) : (
                 <div className="text-red-400 font-bold text-xl">You Lost</div>
