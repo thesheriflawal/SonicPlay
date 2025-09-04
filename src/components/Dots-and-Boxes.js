@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { ethers } from "ethers";
 
-const CONTRACT_ADDRESS = "0xcb63da2c3901e2dbA14B28ce52556Ee5438C6cD6";
+const CONTRACT_ADDRESS = "0xecdD1dC482eA3cB6c43223f7bc2f3d933afaf31b";
 const CONTRACT_ABI = [
   {
     inputs: [],

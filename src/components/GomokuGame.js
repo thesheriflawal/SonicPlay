@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Users, Target } from "lucide-react";
 
-const CONTRACT_ADDRESS = "0xac86A3888aec5cDF98c6cCeCD8975226F6A3D001";
+const CONTRACT_ADDRESS = "0x1151461f2B6DE5FAB868102d7300a17ef50e9225";
 const CONTRACT_ABI = [
   {
     inputs: [],

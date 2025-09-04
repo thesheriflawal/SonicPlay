@@ -874,7 +874,7 @@ const CONTRACT_ABI = [
   },
 ];
 
-const CONTRACT_ADDRESS = "0x4BaEe19A04dF2c6499372b41b7FeE050A2Afba7A";
+const CONTRACT_ADDRESS = "0x04B3D7a8D50303234730df87B9Cf7dAc4637E231";
 
 const playBeep = () => {
   try {

@@ -17,885 +17,885 @@ import {
 } from "lucide-react";
 import { ethers } from "ethers";
 
-const CONTRACT_ADDRESS = "0xbb2a4e46D709A782791c0357d0Ebc7374366cfe4";
+const CONTRACT_ADDRESS = "0x1Cd9647a5Fa82eafeEB790a9A4D7c13E796d0373";
 const CONTRACT_ABI = [
   {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "reason",
-        "type": "string"
-      }
+        indexed: false,
+        internalType: "string",
+        name: "reason",
+        type: "string",
+      },
     ],
-    "name": "GameAbandoned",
-    "type": "event"
+    name: "GameAbandoned",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "string",
-        "name": "roomId",
-        "type": "string"
+        indexed: true,
+        internalType: "string",
+        name: "roomId",
+        type: "string",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "playerX",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "playerX",
+        type: "address",
+      },
     ],
-    "name": "GameCreated",
-    "type": "event"
+    name: "GameCreated",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "winner",
-        "type": "uint8"
+        indexed: false,
+        internalType: "uint8",
+        name: "winner",
+        type: "uint8",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "reason",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "reason",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "uint8[6]",
-        "name": "winningCells",
-        "type": "uint8[6]"
-      }
+        indexed: false,
+        internalType: "uint8[6]",
+        name: "winningCells",
+        type: "uint8[6]",
+      },
     ],
-    "name": "GameFinished",
-    "type": "event"
+    name: "GameFinished",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "playerX",
-        "type": "address"
+        indexed: false,
+        internalType: "address",
+        name: "playerX",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "playerO",
-        "type": "address"
-      }
+        indexed: false,
+        internalType: "address",
+        name: "playerO",
+        type: "address",
+      },
     ],
-    "name": "GameStarted",
-    "type": "event"
+    name: "GameStarted",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "uint8",
-        "name": "player",
-        "type": "uint8"
+        indexed: true,
+        internalType: "uint8",
+        name: "player",
+        type: "uint8",
       },
       {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "row",
-        "type": "uint8"
+        indexed: false,
+        internalType: "uint8",
+        name: "row",
+        type: "uint8",
       },
       {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "col",
-        "type": "uint8"
+        indexed: false,
+        internalType: "uint8",
+        name: "col",
+        type: "uint8",
       },
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "playerAddress",
-        "type": "address"
+        indexed: false,
+        internalType: "address",
+        name: "playerAddress",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
     ],
-    "name": "MoveMade",
-    "type": "event"
+    name: "MoveMade",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "OwnershipTransferred",
-    "type": "event"
+    name: "OwnershipTransferred",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "playerO",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "playerO",
+        type: "address",
+      },
     ],
-    "name": "PlayerJoined",
-    "type": "event"
+    name: "PlayerJoined",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sessionKey",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "sessionKey",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "expiryTime",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "expiryTime",
+        type: "uint256",
+      },
     ],
-    "name": "SessionKeyRegistered",
-    "type": "event"
+    name: "SessionKeyRegistered",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sessionKey",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "sessionKey",
+        type: "address",
+      },
     ],
-    "name": "SessionKeyRevoked",
-    "type": "event"
+    name: "SessionKeyRevoked",
+    type: "event",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address[]",
-        "name": "sessionKeyAddrs",
-        "type": "address[]"
-      }
+        internalType: "address[]",
+        name: "sessionKeyAddrs",
+        type: "address[]",
+      },
     ],
-    "name": "batchCheckSessionKeys",
-    "outputs": [
+    name: "batchCheckSessionKeys",
+    outputs: [
       {
-        "internalType": "bool[]",
-        "name": "valid",
-        "type": "bool[]"
-      }
+        internalType: "bool[]",
+        name: "valid",
+        type: "bool[]",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "name": "checkGameTimeout",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "checkGameTimeout",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "name": "cleanupAbandonedGame",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "cleanupAbandonedGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "roomId",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "roomId",
+        type: "string",
+      },
     ],
-    "name": "createGame",
-    "outputs": [
+    name: "createGame",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "name": "forfeitGame",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "forfeitGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "name": "gameMoves",
-    "outputs": [
+    name: "gameMoves",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "internalType": "uint8",
-        "name": "player",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "player",
+        type: "uint8",
       },
       {
-        "internalType": "uint8",
-        "name": "row",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "row",
+        type: "uint8",
       },
       {
-        "internalType": "uint8",
-        "name": "col",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "col",
+        type: "uint8",
       },
       {
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "name": "games",
-    "outputs": [
+    name: "games",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "internalType": "address",
-        "name": "playerX",
-        "type": "address"
+        internalType: "address",
+        name: "playerX",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "playerO",
-        "type": "address"
+        internalType: "address",
+        name: "playerO",
+        type: "address",
       },
       {
-        "internalType": "uint8",
-        "name": "currentPlayer",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "currentPlayer",
+        type: "uint8",
       },
       {
-        "internalType": "enum TicTacToe.GameStatus",
-        "name": "status",
-        "type": "uint8"
+        internalType: "enum TicTacToe.GameStatus",
+        name: "status",
+        type: "uint8",
       },
       {
-        "internalType": "uint8",
-        "name": "winner",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "winner",
+        type: "uint8",
       },
       {
-        "internalType": "uint256",
-        "name": "lastMoveTime",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "lastMoveTime",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "gameStartTime",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "gameStartTime",
+        type: "uint256",
       },
       {
-        "internalType": "string",
-        "name": "roomId",
-        "type": "string"
+        internalType: "string",
+        name: "roomId",
+        type: "string",
       },
       {
-        "internalType": "uint8",
-        "name": "moveCount",
-        "type": "uint8"
-      }
+        internalType: "uint8",
+        name: "moveCount",
+        type: "uint8",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "name": "getGame",
-    "outputs": [
+    name: "getGame",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
       },
       {
-        "internalType": "address",
-        "name": "playerX",
-        "type": "address"
+        internalType: "address",
+        name: "playerX",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "playerO",
-        "type": "address"
+        internalType: "address",
+        name: "playerO",
+        type: "address",
       },
       {
-        "internalType": "uint8[3][3]",
-        "name": "board",
-        "type": "uint8[3][3]"
+        internalType: "uint8[3][3]",
+        name: "board",
+        type: "uint8[3][3]",
       },
       {
-        "internalType": "uint8",
-        "name": "currentPlayer",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "currentPlayer",
+        type: "uint8",
       },
       {
-        "internalType": "enum TicTacToe.GameStatus",
-        "name": "status",
-        "type": "uint8"
+        internalType: "enum TicTacToe.GameStatus",
+        name: "status",
+        type: "uint8",
       },
       {
-        "internalType": "uint8",
-        "name": "winner",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "winner",
+        type: "uint8",
       },
       {
-        "internalType": "uint256",
-        "name": "lastMoveTime",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "lastMoveTime",
+        type: "uint256",
       },
       {
-        "internalType": "string",
-        "name": "roomId",
-        "type": "string"
+        internalType: "string",
+        name: "roomId",
+        type: "string",
       },
       {
-        "internalType": "uint8",
-        "name": "moveCount",
-        "type": "uint8"
-      }
+        internalType: "uint8",
+        name: "moveCount",
+        type: "uint8",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "roomId",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "roomId",
+        type: "string",
+      },
     ],
-    "name": "getGameByRoomId",
-    "outputs": [
+    name: "getGameByRoomId",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "name": "getGameMoves",
-    "outputs": [
+    name: "getGameMoves",
+    outputs: [
       {
-        "components": [
+        components: [
           {
-            "internalType": "uint256",
-            "name": "gameId",
-            "type": "uint256"
+            internalType: "uint256",
+            name: "gameId",
+            type: "uint256",
           },
           {
-            "internalType": "uint8",
-            "name": "player",
-            "type": "uint8"
+            internalType: "uint8",
+            name: "player",
+            type: "uint8",
           },
           {
-            "internalType": "uint8",
-            "name": "row",
-            "type": "uint8"
+            internalType: "uint8",
+            name: "row",
+            type: "uint8",
           },
           {
-            "internalType": "uint8",
-            "name": "col",
-            "type": "uint8"
+            internalType: "uint8",
+            name: "col",
+            type: "uint8",
           },
           {
-            "internalType": "uint256",
-            "name": "timestamp",
-            "type": "uint256"
-          }
+            internalType: "uint256",
+            name: "timestamp",
+            type: "uint256",
+          },
         ],
-        "internalType": "struct TicTacToe.Move[]",
-        "name": "",
-        "type": "tuple[]"
-      }
+        internalType: "struct TicTacToe.Move[]",
+        name: "",
+        type: "tuple[]",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "name": "getGameState",
-    "outputs": [
+    name: "getGameState",
+    outputs: [
       {
-        "internalType": "uint8[3][3]",
-        "name": "board",
-        "type": "uint8[3][3]"
+        internalType: "uint8[3][3]",
+        name: "board",
+        type: "uint8[3][3]",
       },
       {
-        "internalType": "uint8",
-        "name": "currentPlayer",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "currentPlayer",
+        type: "uint8",
       },
       {
-        "internalType": "enum TicTacToe.GameStatus",
-        "name": "status",
-        "type": "uint8"
+        internalType: "enum TicTacToe.GameStatus",
+        name: "status",
+        type: "uint8",
       },
       {
-        "internalType": "uint8",
-        "name": "winner",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "winner",
+        type: "uint8",
       },
       {
-        "internalType": "uint256",
-        "name": "timeRemaining",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "timeRemaining",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "player",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "player",
+        type: "address",
+      },
     ],
-    "name": "getPlayerActiveGame",
-    "outputs": [
+    name: "getPlayerActiveGame",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "sessionKeyAddr",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "sessionKeyAddr",
+        type: "address",
+      },
     ],
-    "name": "getSessionKey",
-    "outputs": [
+    name: "getSessionKey",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "expiryTime",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "expiryTime",
+        type: "uint256",
       },
       {
-        "internalType": "bool",
-        "name": "isActive",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "isActive",
+        type: "bool",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "name": "getTimeRemaining",
-    "outputs": [
+    name: "getTimeRemaining",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "getTotalGames",
-    "outputs": [
+    inputs: [],
+    name: "getTotalGames",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "internalType": "uint8",
-        "name": "row",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "row",
+        type: "uint8",
       },
       {
-        "internalType": "uint8",
-        "name": "col",
-        "type": "uint8"
-      }
+        internalType: "uint8",
+        name: "col",
+        type: "uint8",
+      },
     ],
-    "name": "isCellEmpty",
-    "outputs": [
+    name: "isCellEmpty",
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "roomId",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "roomId",
+        type: "string",
+      },
     ],
-    "name": "joinGame",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "joinGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
+      },
     ],
-    "name": "leaveGame",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "leaveGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "gameId",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "gameId",
+        type: "uint256",
       },
       {
-        "internalType": "uint8",
-        "name": "row",
-        "type": "uint8"
+        internalType: "uint8",
+        name: "row",
+        type: "uint8",
       },
       {
-        "internalType": "uint8",
-        "name": "col",
-        "type": "uint8"
-      }
+        internalType: "uint8",
+        name: "col",
+        type: "uint8",
+      },
     ],
-    "name": "makeMove",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "makeMove",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
+    inputs: [],
+    name: "owner",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "name": "playerToActiveGame",
-    "outputs": [
+    name: "playerToActiveGame",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "sessionKey",
-        "type": "address"
+        internalType: "address",
+        name: "sessionKey",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "expiryTime",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "expiryTime",
+        type: "uint256",
+      },
     ],
-    "name": "registerSessionKey",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "registerSessionKey",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "sessionKey",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "sessionKey",
+        type: "address",
+      },
     ],
-    "name": "revokeSessionKey",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "revokeSessionKey",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
     ],
-    "name": "roomIdToGameId",
-    "outputs": [
+    name: "roomIdToGameId",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "name": "sessionKeys",
-    "outputs": [
+    name: "sessionKeys",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "sessionKey",
-        "type": "address"
+        internalType: "address",
+        name: "sessionKey",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "expiryTime",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "expiryTime",
+        type: "uint256",
       },
       {
-        "internalType": "bool",
-        "name": "isActive",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "isActive",
+        type: "bool",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
 const createEmptyBoard = () => {
