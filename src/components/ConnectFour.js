@@ -2115,7 +2115,7 @@ const GameLobby = () => {
         }
       }
     } catch (error) {
-      console.log("Could not check existing game, proceeding with join");
+      console.log("Could not check existing game, proceeding with creation");
     }
 
     setIsLoading(true);
@@ -2126,6 +2126,7 @@ const GameLobby = () => {
         .toString(36)
         .substring(2, 8)
         .toUpperCase();
+
       // Validate room ID format
       if (roomIdGenerated.length < 6) {
         setError("Room ID too short");
@@ -2150,12 +2151,12 @@ const GameLobby = () => {
       if (receipt.status === 0) {
         throw new Error("Transaction failed");
       }
+
       console.log("Room created, receipt:", receipt);
 
-      // Find the GameCreated event
-      let gameCreatedEvent;
+      // First, try to find the GameCreated event
+      let gameIdFromEvent = null;
       if (receipt.logs) {
-        // Try to parse logs
         for (const log of receipt.logs) {
           try {
             const parsedLog = contract.interface.parseLog({
@@ -2163,7 +2164,11 @@ const GameLobby = () => {
               data: log.data,
             });
             if (parsedLog && parsedLog.name === "GameCreated") {
-              gameCreatedEvent = parsedLog;
+              gameIdFromEvent = parsedLog.args.gameId;
+              console.log(
+                "Found GameCreated event with ID:",
+                gameIdFromEvent.toString()
+              );
               break;
             }
           } catch (e) {
@@ -2173,8 +2178,8 @@ const GameLobby = () => {
         }
       }
 
-      if (gameCreatedEvent) {
-        const gameIdFromEvent = gameCreatedEvent.args.gameId;
+      // If we found the event, use it directly
+      if (gameIdFromEvent) {
         setRoomId(roomIdGenerated);
         setGameId(gameIdFromEvent);
         setPlayerNumber(1);
@@ -2195,30 +2200,78 @@ const GameLobby = () => {
         };
 
         contract.on("PlayerJoined", handlePlayerJoined);
-      } else {
-        // Fallback: try to get game ID by room ID
+        return;
+      }
+
+      // Fallback: try to get game ID by room ID with retries
+      console.log("Event not found, trying fallback with retries...");
+
+      let gameIdFromContract = null;
+      const maxRetries = 5;
+      const retryDelay = 1000; // 1 second
+
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          const gameIdFromContract = await contract.getGameByRoomId(
-            roomIdGenerated
-          );
-          if (gameIdFromContract && gameIdFromContract.toString() !== "0") {
-            setRoomId(roomIdGenerated);
-            setGameId(gameIdFromContract);
-            setPlayerNumber(1);
-            setPlayers([
-              { id: userAddress, username: username, playerNumber: 1 },
-            ]);
-            setCurrentView("waiting");
-            setError("");
-          } else {
-            throw new Error("Game not found after creation");
+          console.log(`Fallback attempt ${attempt}/${maxRetries}`);
+
+          // Wait a bit before retrying (except first attempt)
+          if (attempt > 1) {
+            await new Promise((resolve) => setTimeout(resolve, retryDelay));
           }
-        } catch (fallbackError) {
-          console.error("Fallback failed:", fallbackError);
-          setError(
-            "Room created but couldn't retrieve game ID. Please try again."
-          );
+
+          gameIdFromContract = await contract.getGameByRoomId(roomIdGenerated);
+
+          // Check if we got a valid response
+          if (gameIdFromContract && gameIdFromContract.toString() !== "0") {
+            console.log(
+              "Successfully retrieved game ID:",
+              gameIdFromContract.toString()
+            );
+            break;
+          } else {
+            console.log(`Attempt ${attempt}: Got empty or zero response`);
+            gameIdFromContract = null;
+          }
+        } catch (error) {
+          console.log(`Attempt ${attempt} failed:`, error.message);
+
+          // If it's a decoding error, the contract might not have the room yet
+          if (error.code === "BAD_DATA" && attempt < maxRetries) {
+            console.log("Bad data error, retrying...");
+            continue;
+          }
+
+          // For other errors or last attempt, throw
+          if (attempt === maxRetries) {
+            throw error;
+          }
         }
+      }
+
+      // If we successfully got the game ID
+      if (gameIdFromContract && gameIdFromContract.toString() !== "0") {
+        setRoomId(roomIdGenerated);
+        setGameId(gameIdFromContract);
+        setPlayerNumber(1);
+        setPlayers([{ id: userAddress, username: username, playerNumber: 1 }]);
+        setCurrentView("waiting");
+        setError("");
+
+        // Set up listener for second player joining
+        const handlePlayerJoined = (gameId, player2Address) => {
+          if (gameId.toString() === gameIdFromContract.toString()) {
+            setPlayers((prev) => [
+              ...prev,
+              { id: player2Address, username: "Player 2", playerNumber: 2 },
+            ]);
+            setCurrentView("game");
+            contract.off("PlayerJoined", handlePlayerJoined);
+          }
+        };
+
+        contract.on("PlayerJoined", handlePlayerJoined);
+      } else {
+        throw new Error("Could not retrieve game ID after multiple attempts");
       }
     } catch (error) {
       console.error("Error creating room:", error);
@@ -2231,6 +2284,13 @@ const GameLobby = () => {
       } else if (error.message.includes("execution reverted")) {
         errorMessage =
           "Contract error: " + (error.reason || "Please try again");
+      } else if (error.code === "BAD_DATA") {
+        errorMessage =
+          "Contract returned invalid data. The room may have been created but couldn't be retrieved. Please try joining with the room ID: " +
+          (roomIdGenerated || "unknown");
+      } else if (error.message.includes("Could not retrieve game ID")) {
+        errorMessage =
+          "Room created but couldn't be found. This might be a network issue. Please try again or check if the room was created successfully.";
       } else {
         errorMessage =
           "Failed to create room: " + (error.message || "Unknown error");
