@@ -2061,7 +2061,6 @@ const GameLobby = () => {
 
     setCurrentView("home");
   };
-
   const createRoom = async () => {
     if (!contract || !username.trim()) {
       setError("Wallet not connected or invalid username");
@@ -2136,33 +2135,81 @@ const GameLobby = () => {
 
       console.log("Creating room with ID:", roomIdGenerated);
 
+      // Check if room ID already exists (important check!)
+      try {
+        const existingGameId = await contract.getGameByRoomId(roomIdGenerated);
+        if (existingGameId && existingGameId.toString() !== "0") {
+          console.log("Room ID already exists, generating new one");
+          // Recursively try with a new room ID
+          setIsLoading(false);
+          return createRoom();
+        }
+      } catch (error) {
+        console.log("Room ID check failed, proceeding:", error.message);
+      }
+
+      // Get total games before creating (for debugging)
+      const totalGamesBefore = await contract.getTotalGames();
+      console.log("Total games before creation:", totalGamesBefore.toString());
+
       const gasEstimate = await contract.createGame.estimateGas(
         roomIdGenerated
       );
       const gasLimit = Math.floor(Number(gasEstimate) * 1.2);
 
+      console.log(
+        "Estimated gas:",
+        gasEstimate.toString(),
+        "Using limit:",
+        gasLimit
+      );
+
       const tx = await contract.createGame(roomIdGenerated, {
         gasLimit: gasLimit,
       });
 
+      console.log("Transaction sent:", tx.hash);
       setError("Creating room... please wait for transaction confirmation");
 
       const receipt = await tx.wait();
+      console.log("Transaction receipt:", receipt);
+
       if (receipt.status === 0) {
         throw new Error("Transaction failed");
       }
 
-      console.log("Room created, receipt:", receipt);
+      // Check total games after (should have increased by 1)
+      const totalGamesAfter = await contract.getTotalGames();
+      console.log("Total games after creation:", totalGamesAfter.toString());
 
-      // First, try to find the GameCreated event
+      if (totalGamesAfter.toString() === totalGamesBefore.toString()) {
+        console.error(
+          "Total games didn't increase - transaction might have failed silently"
+        );
+      }
+
+      // Method 1: Try to parse GameCreated event from receipt
       let gameIdFromEvent = null;
-      if (receipt.logs) {
-        for (const log of receipt.logs) {
+
+      if (receipt.logs && receipt.logs.length > 0) {
+        console.log("Receipt has", receipt.logs.length, "logs");
+
+        for (let i = 0; i < receipt.logs.length; i++) {
+          const log = receipt.logs[i];
+          console.log(`Log ${i}:`, {
+            address: log.address,
+            topics: log.topics,
+            data: log.data,
+          });
+
           try {
             const parsedLog = contract.interface.parseLog({
               topics: log.topics,
               data: log.data,
             });
+
+            console.log(`Parsed log ${i}:`, parsedLog);
+
             if (parsedLog && parsedLog.name === "GameCreated") {
               gameIdFromEvent = parsedLog.args.gameId;
               console.log(
@@ -2172,61 +2219,118 @@ const GameLobby = () => {
               break;
             }
           } catch (e) {
-            // Skip unparseable logs
-            continue;
+            console.log(`Could not parse log ${i}:`, e.message);
           }
+        }
+      } else {
+        console.log("No logs in receipt");
+      }
+
+      // Method 2: Try using events filter (alternative approach)
+      if (!gameIdFromEvent) {
+        console.log("Trying event filter approach...");
+        try {
+          const filter = contract.filters.GameCreated(null, roomIdGenerated);
+          const events = await contract.queryFilter(
+            filter,
+            receipt.blockNumber,
+            receipt.blockNumber
+          );
+
+          console.log("Found events with filter:", events);
+
+          if (events.length > 0) {
+            const event = events.find((e) => e.transactionHash === tx.hash);
+            if (event) {
+              gameIdFromEvent = event.args.gameId;
+              console.log(
+                "Found GameCreated event via filter:",
+                gameIdFromEvent.toString()
+              );
+            }
+          }
+        } catch (error) {
+          console.log("Event filter approach failed:", error.message);
         }
       }
 
-      // If we found the event, use it directly
+      // If we found the event, use it
       if (gameIdFromEvent) {
-        setRoomId(roomIdGenerated);
-        setGameId(gameIdFromEvent);
-        setPlayerNumber(1);
-        setPlayers([{ id: userAddress, username: username, playerNumber: 1 }]);
-        setCurrentView("waiting");
-        setError("");
+        console.log("Using game ID from event:", gameIdFromEvent.toString());
 
-        // Set up listener for second player joining
-        const handlePlayerJoined = (gameId, player2Address) => {
-          if (gameId.toString() === gameIdFromEvent.toString()) {
-            setPlayers((prev) => [
-              ...prev,
-              { id: player2Address, username: "Player 2", playerNumber: 2 },
-            ]);
-            setCurrentView("game");
-            contract.off("PlayerJoined", handlePlayerJoined);
-          }
-        };
+        // Verify the game exists and has correct data
+        try {
+          const gameData = await contract.getGame(gameIdFromEvent);
+          console.log("Game data verification:", gameData);
 
-        contract.on("PlayerJoined", handlePlayerJoined);
-        return;
+          setRoomId(roomIdGenerated);
+          setGameId(gameIdFromEvent);
+          setPlayerNumber(1);
+          setPlayers([
+            { id: userAddress, username: username, playerNumber: 1 },
+          ]);
+          setCurrentView("waiting");
+          setError("");
+
+          // Set up listener for second player joining
+          const handlePlayerJoined = (gameId, player2Address) => {
+            console.log(
+              "Player joined event:",
+              gameId.toString(),
+              player2Address
+            );
+            if (gameId.toString() === gameIdFromEvent.toString()) {
+              setPlayers((prev) => [
+                ...prev,
+                { id: player2Address, username: "Player 2", playerNumber: 2 },
+              ]);
+              setCurrentView("game");
+              contract.off("PlayerJoined", handlePlayerJoined);
+            }
+          };
+
+          contract.on("PlayerJoined", handlePlayerJoined);
+          return;
+        } catch (verifyError) {
+          console.error("Game verification failed:", verifyError);
+          // Continue to fallback method
+        }
       }
 
-      // Fallback: try to get game ID by room ID with retries
-      console.log("Event not found, trying fallback with retries...");
+      // Method 3: Fallback - query by room ID with more aggressive retries
+      console.log("Using fallback method - querying by room ID");
 
       let gameIdFromContract = null;
-      const maxRetries = 5;
-      const retryDelay = 1000; // 1 second
+      const maxRetries = 8; // Increased retries
+      const baseDelay = 500; // Start with shorter delay
 
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
           console.log(`Fallback attempt ${attempt}/${maxRetries}`);
 
-          // Wait a bit before retrying (except first attempt)
+          // Exponential backoff delay
           if (attempt > 1) {
-            await new Promise((resolve) => setTimeout(resolve, retryDelay));
+            const delay = baseDelay * Math.pow(1.5, attempt - 2);
+            console.log(`Waiting ${delay}ms before retry...`);
+            await new Promise((resolve) => setTimeout(resolve, delay));
           }
 
           gameIdFromContract = await contract.getGameByRoomId(roomIdGenerated);
+          console.log(
+            `Attempt ${attempt} response:`,
+            gameIdFromContract?.toString()
+          );
 
-          // Check if we got a valid response
           if (gameIdFromContract && gameIdFromContract.toString() !== "0") {
             console.log(
               "Successfully retrieved game ID:",
               gameIdFromContract.toString()
             );
+
+            // Double-check by getting game data
+            const gameData = await contract.getGame(gameIdFromContract);
+            console.log("Game data check:", gameData);
+
             break;
           } else {
             console.log(`Attempt ${attempt}: Got empty or zero response`);
@@ -2235,20 +2339,16 @@ const GameLobby = () => {
         } catch (error) {
           console.log(`Attempt ${attempt} failed:`, error.message);
 
-          // If it's a decoding error, the contract might not have the room yet
-          if (error.code === "BAD_DATA" && attempt < maxRetries) {
-            console.log("Bad data error, retrying...");
-            continue;
-          }
-
-          // For other errors or last attempt, throw
+          // For the last attempt, don't continue
           if (attempt === maxRetries) {
-            throw error;
+            throw new Error(
+              `Failed to retrieve game ID after ${maxRetries} attempts: ${error.message}`
+            );
           }
         }
       }
 
-      // If we successfully got the game ID
+      // Final success check
       if (gameIdFromContract && gameIdFromContract.toString() !== "0") {
         setRoomId(roomIdGenerated);
         setGameId(gameIdFromContract);
@@ -2259,6 +2359,11 @@ const GameLobby = () => {
 
         // Set up listener for second player joining
         const handlePlayerJoined = (gameId, player2Address) => {
+          console.log(
+            "Player joined event:",
+            gameId.toString(),
+            player2Address
+          );
           if (gameId.toString() === gameIdFromContract.toString()) {
             setPlayers((prev) => [
               ...prev,
@@ -2271,7 +2376,7 @@ const GameLobby = () => {
 
         contract.on("PlayerJoined", handlePlayerJoined);
       } else {
-        throw new Error("Could not retrieve game ID after multiple attempts");
+        throw new Error("Could not retrieve game ID after all attempts");
       }
     } catch (error) {
       console.error("Error creating room:", error);
@@ -2282,152 +2387,25 @@ const GameLobby = () => {
       } else if (error.message.includes("insufficient funds")) {
         errorMessage = "Insufficient funds for gas";
       } else if (error.message.includes("execution reverted")) {
-        errorMessage =
-          "Contract error: " + (error.reason || "Please try again");
+        if (error.reason) {
+          errorMessage = "Contract error: " + error.reason;
+        } else if (error.message.includes("Room ID already exists")) {
+          errorMessage = "Room ID already exists. Please try again.";
+        } else {
+          errorMessage = "Contract execution failed. Please try again.";
+        }
       } else if (error.code === "BAD_DATA") {
         errorMessage =
-          "Contract returned invalid data. The room may have been created but couldn't be retrieved. Please try joining with the room ID: " +
-          (roomIdGenerated || "unknown");
+          "Contract returned invalid data. Please check your network connection and try again.";
       } else if (error.message.includes("Could not retrieve game ID")) {
         errorMessage =
-          "Room created but couldn't be found. This might be a network issue. Please try again or check if the room was created successfully.";
+          "Room may have been created but couldn't be retrieved. Please check the recent transactions or try again.";
       } else {
         errorMessage =
           "Failed to create room: " + (error.message || "Unknown error");
       }
 
       setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const debugContract = async () => {
-    try {
-      console.log("=== CONTRACT DEBUG ===");
-
-      // Test 1: Check if contract is properly connected
-      console.log("Contract address:", contract.address || contract.target);
-      console.log("User address:", userAddress);
-
-      // Test 2: Try calling a simple view function first
-      try {
-        const gameCounter = await contract.gameCounter();
-        console.log("Current game counter:", gameCounter.toString());
-      } catch (e) {
-        console.log("Could not get game counter:", e.message);
-      }
-
-      // Test 3: Check recent games
-      try {
-        // Try to get a game by ID (if you have any created)
-        const gameData = await contract.getGame(1);
-        console.log("Game 1 data:", gameData);
-      } catch (e) {
-        console.log("Could not get game 1:", e.message);
-      }
-
-      // Test 4: Test getGameByRoomId with a known non-existent room
-      try {
-        const result = await contract.getGameByRoomId("NONEXISTENT");
-        console.log("Non-existent room result:", result.toString());
-      } catch (e) {
-        console.log("Error with non-existent room:", e.message);
-      }
-
-      // Test 5: Check if the function exists and has correct signature
-      console.log(
-        "Contract functions:",
-        Object.keys(contract.interface.functions)
-      );
-      console.log(
-        "getGameByRoomId signature:",
-        contract.interface.getFunction("getGameByRoomId")
-      );
-    } catch (error) {
-      console.error("Debug failed:", error);
-    }
-  };
-
-  // Modified createRoom with better debugging
-  const createRoomWithDebug = async () => {
-    if (!contract || !username.trim()) {
-      setError("Wallet not connected or invalid username");
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const roomIdGenerated = Math.random()
-        .toString(36)
-        .substring(2, 8)
-        .toUpperCase();
-
-      console.log("=== CREATING ROOM DEBUG ===");
-      console.log("Room ID:", roomIdGenerated);
-
-      // Debug: Check contract state before creation
-      try {
-        const beforeCounter = await contract.gameCounter();
-        console.log("Game counter before:", beforeCounter.toString());
-      } catch (e) {
-        console.log("Could not get counter before:", e.message);
-      }
-
-      const tx = await contract.createGame(roomIdGenerated);
-      console.log("Transaction hash:", tx.hash);
-
-      setError("Creating room... please wait for transaction confirmation");
-
-      const receipt = await tx.wait();
-      console.log("Transaction confirmed. Block:", receipt.blockNumber);
-
-      // Debug: Check contract state after creation
-      try {
-        const afterCounter = await contract.gameCounter();
-        console.log("Game counter after:", afterCounter.toString());
-      } catch (e) {
-        console.log("Could not get counter after:", e.message);
-      }
-
-      // Debug: Check if we can find the room immediately
-      console.log("Attempting to find room immediately...");
-      try {
-        const immediateResult = await contract.getGameByRoomId(roomIdGenerated);
-        console.log("Immediate result:", immediateResult.toString());
-      } catch (e) {
-        console.log("Immediate lookup failed:", e.message);
-        console.log("Error code:", e.code);
-        console.log("Error data:", e.data);
-      }
-
-      // Debug: Parse events manually
-      console.log("=== PARSING EVENTS ===");
-      console.log("Receipt logs count:", receipt.logs?.length || 0);
-
-      if (receipt.logs) {
-        receipt.logs.forEach((log, index) => {
-          console.log(`Log ${index}:`, {
-            address: log.address,
-            topics: log.topics,
-            data: log.data,
-          });
-
-          try {
-            const parsed = contract.interface.parseLog(log);
-            console.log(`Parsed log ${index}:`, parsed);
-          } catch (e) {
-            console.log(`Could not parse log ${index}:`, e.message);
-          }
-        });
-      }
-
-      setError("Room creation failed - check console for debug info");
-    } catch (error) {
-      console.error("Error creating room:", error);
-      setError(`Failed to create room: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
