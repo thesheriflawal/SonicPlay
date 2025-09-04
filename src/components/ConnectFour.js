@@ -1896,19 +1896,16 @@ const GameLobby = () => {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
-
-      // Check if we're on the correct network (Lisk Sepolia)
       const network = await provider.getNetwork();
-      const LISK_SEPOLIA_CHAIN_ID = 4202; // Lisk Sepolia chain ID
+      const SONIC_CHAIN_ID = 146;
 
-      if (Number(network.chainId) !== LISK_SEPOLIA_CHAIN_ID) {
+      if (Number(network.chainId) !== SONIC_CHAIN_ID) {
         try {
           await window.ethereum.request({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: `0x${LISK_SEPOLIA_CHAIN_ID.toString(16)}` }],
+            params: [{ chainId: `0x${SONIC_CHAIN_ID.toString(16)}` }],
           });
 
-          // Reload the provider after network switch
           await new Promise((resolve) => setTimeout(resolve, 1000));
           const newProvider = new ethers.BrowserProvider(window.ethereum);
           const newSigner = await newProvider.getSigner();
@@ -1917,26 +1914,24 @@ const GameLobby = () => {
           setSigner(newSigner);
         } catch (switchError) {
           if (switchError.code === 4902) {
-            // Network not added to MetaMask
             try {
               await window.ethereum.request({
                 method: "wallet_addEthereumChain",
                 params: [
                   {
-                    chainId: `0x${LISK_SEPOLIA_CHAIN_ID.toString(16)}`,
-                    chainName: "Lisk Sepolia Testnet",
+                    chainId: `0x${SONIC_CHAIN_ID.toString(16)}`,
+                    chainName: "Sonic Mainnet",
                     nativeCurrency: {
-                      name: "ETH",
-                      symbol: "ETH",
+                      name: "Sonic",
+                      symbol: "S",
                       decimals: 18,
                     },
-                    rpcUrls: ["https://rpc.sepolia-api.lisk.com"],
-                    blockExplorerUrls: ["https://sepolia-blockscout.lisk.com"],
+                    rpcUrls: ["https://rpc.soniclabs.com"],
+                    blockExplorerUrls: ["https://sonicscan.org"],
                   },
                 ],
               });
 
-              // Reload the provider after adding network
               await new Promise((resolve) => setTimeout(resolve, 1000));
               const newProvider = new ethers.BrowserProvider(window.ethereum);
               const newSigner = await newProvider.getSigner();
@@ -1944,14 +1939,12 @@ const GameLobby = () => {
               setProvider(newProvider);
               setSigner(newSigner);
             } catch (addError) {
-              setError(
-                "Failed to add Lisk Sepolia network. Please add it manually."
-              );
+              setError("Failed to add Sonic network. Please add it manually.");
               setConnectionStatus("error");
               return false;
             }
           } else {
-            setError("Please switch to Lisk Sepolia network in MetaMask");
+            setError("Please switch to Sonic network in MetaMask");
             setConnectionStatus("error");
             return false;
           }

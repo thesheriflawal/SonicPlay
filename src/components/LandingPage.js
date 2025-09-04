@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Play,
   Trophy,
@@ -23,7 +23,10 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-const LandingPage = ({ onGameSelect, onAboutCreator }) => {
+const LandingPage = ({
+  onGameSelect = () => {},
+  onAboutCreator = () => {},
+}) => {
   const [selectedGame, setSelectedGame] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [showGameInstructions, setShowGameInstructions] = useState(null);
@@ -177,14 +180,15 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
     { label: "Community Players", value: "1K+", icon: Users },
   ];
 
-  const sepoliaFaucets = [
-    { name: "Lisk Sepolia Faucet", url: "https://sepolia-faucet.lisk.com/" },
-    { name: "Alchemy Faucet", url: "https://sepoliafaucet.com/" },
+  const sonicFaucets = [
     {
-      name: "QuickNode Faucet",
-      url: "https://faucet.quicknode.com/ethereum/sepolia",
+      name: "Sonic Testnet Faucet",
+      url: "https://testnet.soniclabs.com/account",
     },
-    { name: "Infura Faucet", url: "https://www.infura.io/faucet/sepolia" },
+    { name: "Sonic Official Bridge", url: "https://bridge.soniclabs.com/" },
+    { name: "Chainlist - Add Sonic", url: "https://chainlist.org/chain/146" },
+    { name: "Sonic Documentation", url: "https://docs.soniclabs.com/" },
+    { name: "debridge", url: "https://app.debridge.finance/" },
   ];
 
   const GameInstructionsModal = ({ game, onClose }) => (
@@ -209,7 +213,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
 
         <div className="space-y-4">
           <div>
-            <h4 className="text-lg font-semibold text-purple-400 mb-2">
+            <h4 className="text-lg font-semibold text-blue-400 mb-2">
               How to Play
             </h4>
             <p className="text-gray-300 leading-relaxed">{game.instructions}</p>
@@ -262,7 +266,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-cyan-900 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0">
         {/* Floating Particles */}
@@ -281,7 +285,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
 
         {/* Mouse Follower Glow */}
         <div
-          className="absolute w-96 h-96 bg-gradient-radial from-purple-500/20 to-transparent rounded-full blur-3xl pointer-events-none transition-all duration-300"
+          className="absolute w-96 h-96 bg-gradient-radial from-blue-500/20 to-transparent rounded-full blur-3xl pointer-events-none transition-all duration-300"
           style={{
             left: mousePosition.x - 192,
             top: mousePosition.y - 192,
@@ -294,53 +298,55 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
         <div className="text-center mb-16">
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-lg opacity-75 animate-pulse"></div>
-              <div className="relative bg-gradient-to-r from-purple-600 to-pink-600 p-4 rounded-full">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full blur-lg opacity-75 animate-pulse"></div>
+              <div className="relative bg-gradient-to-r from-blue-600 to-cyan-600 p-4 rounded-full">
                 <Coins className="w-12 h-12 text-white" />
               </div>
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-500 to-purple-400 mb-6 tracking-tight">
             GameHub
           </h1>
 
           <div className="relative inline-block mb-8">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-pink-600/30 rounded-full blur-xl"></div>
-            <p className="relative text-xl md:text-2xl lg:text-3xl text-gray-300 font-light px-8 py-3 rounded-full border border-purple-500/30 backdrop-blur-sm">
-              Blockchain Gaming Revolution
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 to-cyan-600/30 rounded-full blur-xl"></div>
+            <p className="relative text-xl md:text-2xl lg:text-3xl text-gray-300 font-light px-8 py-3 rounded-full border border-blue-500/30 backdrop-blur-sm">
+              Powered by Sonic Network
             </p>
           </div>
 
           <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8">
-            Experience classic games reimagined with blockchain technology.
-            Secure, transparent, and rewarding gameplay awaits.
+            Experience classic games reimagined with Sonic blockchain
+            technology. Lightning-fast transactions, minimal fees, and secure
+            gameplay.
           </p>
 
-          <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-2xl p-6 max-w-4xl mx-auto mb-8">
+          <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-2xl p-6 max-w-4xl mx-auto mb-8">
             <div className="flex items-start gap-4">
-              <AlertTriangle className="w-6 h-6 text-orange-400 flex-shrink-0 mt-1" />
+              <AlertTriangle className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
               <div className="text-left">
-                <h3 className="text-lg font-semibold text-orange-400 mb-2">
-                  🚀 Deployed on Lisk Sepolia Testnet
+                <h3 className="text-lg font-semibold text-blue-400 mb-2">
+                  🚀 Deployed on Sonic Network
                 </h3>
                 <p className="text-gray-300 mb-4">
-                  All games are deployed on the Lisk Sepolia testnet.
-                  You&apos;ll need Lisk Sepolia ETH to play and interact with
-                  the smart contracts.
+                  All games are deployed on the Sonic mainnet (Chain ID: 146).
+                  You&apos;ll need Sonic (S) tokens to play and interact with
+                  the smart contracts. Enjoy ultra-fast transactions and minimal
+                  fees!
                 </p>
                 <div className="space-y-2">
                   <p className="text-sm text-gray-400 font-medium">
-                    Get free Lisk Sepolia ETH from these faucets:
+                    Get started with Sonic:
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {sepoliaFaucets.map((faucet, index) => (
+                    {sonicFaucets.map((faucet, index) => (
                       <a
                         key={index}
                         href={faucet.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-orange-500/20 text-orange-300 text-sm rounded-lg hover:bg-orange-500/30 transition-colors duration-200"
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-blue-500/20 text-blue-300 text-sm rounded-lg hover:bg-blue-500/30 transition-colors duration-200"
                       >
                         {faucet.name}
                         <ExternalLink className="w-3 h-3" />
@@ -354,7 +360,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
 
           <button
             onClick={onAboutCreator}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 text-purple-300 rounded-xl hover:from-purple-600/30 hover:to-pink-600/30 hover:border-purple-400/50 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 rounded-xl hover:from-blue-600/30 hover:to-cyan-600/30 hover:border-blue-400/50 transition-all duration-300"
           >
             <User className="w-4 h-4" />
             About Creator
@@ -365,9 +371,9 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
           {stats.map((stat, index) => (
             <div key={index} className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-              <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 md:p-6 text-center group-hover:border-purple-500/50 transition-all duration-300">
-                <stat.icon className="w-6 h-6 md:w-8 md:h-8 text-purple-400 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+              <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-4 md:p-6 text-center group-hover:border-blue-500/50 transition-all duration-300">
+                <stat.icon className="w-6 h-6 md:w-8 md:h-8 text-blue-400 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" />
                 <div className="text-2xl md:text-3xl font-bold text-white mb-1">
                   {stat.value}
                 </div>
@@ -383,7 +389,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
         <div className="mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-12">
             Choose Your{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
               Adventure
             </span>
           </h2>
@@ -409,7 +415,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
                 <div
                   className={`relative bg-gray-800/70 backdrop-blur-md border rounded-3xl p-4 md:p-6 h-full transition-all duration-300 ${
                     game.status === "available"
-                      ? "border-gray-700/50 group-hover:border-purple-500/50 group-hover:bg-gray-700/70"
+                      ? "border-gray-700/50 group-hover:border-blue-500/50 group-hover:bg-gray-700/70"
                       : "border-gray-700/30 opacity-75"
                   }`}
                 >
@@ -449,7 +455,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-lg md:text-xl font-bold text-white mb-2 md:mb-3 group-hover:text-purple-300 transition-colors duration-300">
+                  <h3 className="text-lg md:text-xl font-bold text-white mb-2 md:mb-3 group-hover:text-blue-300 transition-colors duration-300">
                     {game.title}
                   </h3>
 
@@ -492,7 +498,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
                     <button
                       className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                         game.status === "available"
-                          ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25"
+                          ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-500 hover:to-cyan-500 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
                           : "bg-gray-700/50 text-gray-400 cursor-not-allowed"
                       }`}
                       disabled={game.status !== "available"}
@@ -526,7 +532,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
             Why Choose{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
               GameHub
             </span>
             ?
@@ -535,25 +541,25 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto">
             <div className="group">
               <div className="relative mb-4">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-full p-4 md:p-6 w-16 h-16 md:w-20 md:h-20 mx-auto group-hover:border-purple-500/50 transition-all duration-300">
-                  <Shield className="w-6 h-6 md:w-8 md:h-8 text-purple-400 mx-auto" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-full p-4 md:p-6 w-16 h-16 md:w-20 md:h-20 mx-auto group-hover:border-blue-500/50 transition-all duration-300">
+                  <Shield className="w-6 h-6 md:w-8 md:h-8 text-blue-400 mx-auto" />
                 </div>
               </div>
               <h3 className="text-lg md:text-xl font-semibold text-white mb-2">
-                Blockchain Secured
+                Sonic Powered
               </h3>
               <p className="text-gray-400 text-sm md:text-base">
-                Every game is secured by blockchain technology ensuring fair
-                play and transparency.
+                Lightning-fast transactions and minimal fees on the Sonic
+                blockchain ensure smooth gaming experiences.
               </p>
             </div>
 
             <div className="group">
               <div className="relative mb-4">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-full p-4 md:p-6 w-16 h-16 md:w-20 md:h-20 mx-auto group-hover:border-purple-500/50 transition-all duration-300">
-                  <Trophy className="w-6 h-6 md:w-8 md:h-8 text-purple-400 mx-auto" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-full p-4 md:p-6 w-16 h-16 md:w-20 md:h-20 mx-auto group-hover:border-blue-500/50 transition-all duration-300">
+                  <Trophy className="w-6 h-6 md:w-8 md:h-8 text-blue-400 mx-auto" />
                 </div>
               </div>
               <h3 className="text-lg md:text-xl font-semibold text-white mb-2">
@@ -561,15 +567,15 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
               </h3>
               <p className="text-gray-400 text-sm md:text-base">
                 Win games and earn cryptocurrency rewards in our play-to-earn
-                ecosystem.
+                ecosystem powered by Sonic.
               </p>
             </div>
 
             <div className="group">
               <div className="relative mb-4">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-full p-4 md:p-6 w-16 h-16 md:w-20 md:h-20 mx-auto group-hover:border-purple-500/50 transition-all duration-300">
-                  <Users className="w-6 h-6 md:w-8 md:h-8 text-purple-400 mx-auto" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                <div className="relative bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-full p-4 md:p-6 w-16 h-16 md:w-20 md:h-20 mx-auto group-hover:border-blue-500/50 transition-all duration-300">
+                  <Users className="w-6 h-6 md:w-8 md:h-8 text-blue-400 mx-auto" />
                 </div>
               </div>
               <h3 className="text-lg md:text-xl font-semibold text-white mb-2">
@@ -577,7 +583,7 @@ const LandingPage = ({ onGameSelect, onAboutCreator }) => {
               </h3>
               <p className="text-gray-400 text-sm md:text-base">
                 Join thousands of players worldwide in competitive multiplayer
-                gaming.
+                gaming on Sonic network.
               </p>
             </div>
           </div>
